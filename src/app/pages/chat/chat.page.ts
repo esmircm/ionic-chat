@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
+import { ChatModel } from '../../services/model/chat.model';
 
 @Component({
   selector: 'app-chat',
@@ -10,7 +11,7 @@ export class ChatPage implements OnInit {
 
   public users = 0;
   public message = '';
-  public messages: Array<string> = new Array<string>();
+  public chats: Array<ChatModel> = new Array<ChatModel>();
 
   constructor(private chatService: ChatService) { }
 
@@ -22,15 +23,20 @@ export class ChatPage implements OnInit {
 
   public addChat(): void {
 
-    this.messages.push(this.message);
-    this.chatService.sendChat(this.message);
+    const newMessage: ChatModel = {
+      message: this.message
+    };
+
+    this.chats.push(newMessage);
+
+    this.chatService.sendChat(newMessage);
     this.message = '';
   }
 
   private listenReceiveChat(): void {
 
-    this.chatService.receiveChat().subscribe((message: string) => {
-      this.messages.push(message);
+    this.chatService.receiveChat().subscribe((chat: Array<ChatModel>) => {
+      this.chats = chat;
     });
   }
 
